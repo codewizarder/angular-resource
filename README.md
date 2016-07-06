@@ -1,32 +1,81 @@
+-----------------------------Teacher.resource.js----------------------------------------------
 (function(){
-    "use strict";
-    angular
-        .module('roadrunner')
-        .factory("ProfileResource", ProfileResource);
-
-    ProfileResource.$inject = ['$resource', 'api', 'student.model'];
+    'use strict';
     
-        function ProfileResource($resource, api, studentModel){
-            var odataUrl = api.getOdataBaseUrl() + '/Students'; 
-            var apiUrl = api.getApiBaseUrl() + '/Student';                       
-            var Resource = $resource(odataUrl, {},
-                 {
-                    'getStudentSections': { method: 'GET', url: apiUrl + '/GetStudentDetail' + '/:id'},
-                    'updateProfile': { method: 'POST', url: apiUrl + '/UpdateProfile' + '/:id' },
-                    'updateGuardian': { method: 'POST', url: apiUrl + '/UpdateGuardian' + '/:id' },
-                    'updateContact': { method: 'POST', url: apiUrl + '/UpdateContact' + '/:id' },
-                    'updateClassAllocation': { method: 'POST', url: apiUrl + '/UpdateClassAllocation' + '/:id' },
-                    'addClassAllocation': { method: 'POST', url: apiUrl + '/AddClassAllocation' + '/:id' },
-                    'save': { method: 'POST', url: apiUrl + '/EnrollStudent' }
-                 },
-                 {
-                     isodatav4: true
-                 }
-            );
-            
-            studentModel.extend(Resource);
+    angular
+        .module('Repositories')
+        .factory('TeacherRepository', TeacherRepository);
+    
+    TeacherRepository.$inject = ['$resource'];
+    /* @ngInject */
+    function TeacherRepository($resource){      
+        var teacherURl = 'http://roadrunnerapi.apphb.com/odata/Teachers';
+        return $resource(teacherURl,{},{
+            getAllTeachers: {method: 'GET'},
+            getTeacherDetails: {method: 'GET', url: teacherURl + '(:teacherId)'}
+            getTeacherDetails: {method: 'GET', url: teacherURl + '/:teacherId'} // if just api
+        });
+    }
+    
+})();
+-----------------------------------------------------------------------------------------------
 
-            return Resource;
 
-        };    
-}());
+-------------------------------Teacher.service.js---------------------------------------------
+(function(){
+    'use strict';
+    
+    angular
+        .module('teacher.module')
+        .factory('TeacherService', TeacherService);
+    
+    TeacherService.$inject = ['TeacherRepository'];
+    /* @ngInject */
+    function TeacherService(TeacherRepository){
+        var service = {
+            getAllTeachers: getAllTeachers
+        };
+        
+        return service;
+        
+        function getTeacher(id){
+            return TeacherRepository.getTeacherDetails({teacherId: id}).$promise;
+        }
+        
+        function getAllTeachers(){
+            return TeacherRepository.getAllTeachers().$promise;
+        }
+    }
+})();
+-----------------------------------------------------------------------------------------------
+
+
+-------------------------------Teacher.controller.js---------------------------------------------
+
+(function(){
+    'use strict';
+    
+    angular
+        .module('teacher.module')
+        .controller('TeacherController', TeacherController);
+    
+    TeacherController.$inject = ['TeacherService'];
+    /* @ngInject */    
+    function TeacherController(TeacherService){
+        var vm = this;
+        vm.test = "Test"
+        var promise = TeacherService.getAllTeachers();
+        
+        promise.then(function(data){
+            vm.teachers = data.value;  // this may change qccording to the api 
+        }, function(err){
+            console.warn(err);
+        });
+        
+        console.log(promise);
+    }
+    
+})();
+
+
+-----------------------------------------------------------------------------------------------
