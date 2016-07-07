@@ -1,0 +1,16 @@
+(function(){
+
+return $resource(teacherURl,{teacherId: '@idm'},{
+            getAllTeachers: {method: 'GET'},
+            getTeacherDetails: {method: 'GET', url: teacherURl + '(:teacherId)'}
+        });
+        
+        function getTeacher(id = A0001){
+            return TeacherRepository.getTeacherDetails({idm: id, teacherId: 1}).$promise;
+        }
+        
+        
+        result req will be 
+        http://roadrunnerapi.apphb.com/odata/Students(1)?idm=A0001
+
+})();
