@@ -79,3 +79,47 @@
 
 
 -----------------------------------------------------------------------------------------------
+
+-------------------------------post form data angular.js---------------------------------------------
+
+
+(function(){
+    'use strict';
+    
+    angular
+        .module('teacher.module')
+        .controller('TeacherController', TeacherController);
+    
+    TeacherController.$inject = ['TeacherService'];
+    /* @ngInject */    
+    
+    function TeacherController(){
+    
+    var Resource = $odataresource(odataApi/Teachers, {},
+               {
+                   'query': { method: 'GET', isArray: true },
+                   'update': { method: 'PUT', url: odataUrl + '(:teacherId)' },
+                   'getTeacherDetails': { method: 'GET', url: odataUrl + '(:teacherId)' }
+               }
+            );
+        
+        function loadNewTeacher() {
+            vm.teacher = new TeacherResource();
+        };
+        
+        
+        function submitEnrolment() {
+            vm.enrolment_saving = true;
+            vm.teacher.$save().then(function (data) {
+                notify.success("Save success");
+            }, function (error) {
+                notify.error("Save failed");
+            }).finally(function () {
+                vm.enrolment_saving = false;
+            })
+        }
+    
+    }
+})();
+
+-----------------------------------------------------------------------------------------------
