@@ -46,3 +46,13 @@
   </div>
   <button type="submit" ng-click='vm.saveTEacher()' class="btn btn-default">Submit</button>
 </form>
+
+
+
+
+
+    ---------------------------In service to get teacher---------------------------------------------------------
+//remember to return the promise
+function getAllTeachers(){
+            return TeacherRepository.getAllTeachers().$promise;
+        }
