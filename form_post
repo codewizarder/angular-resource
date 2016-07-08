@@ -1,0 +1,48 @@
+  (function(){
+    'use strict';
+    
+    angular
+        .module('app')
+        .factory('TeacherRepository', TeacherRepository);
+    
+    TeacherRepository.$inject = ['$resource'];
+    /* @ngInject */
+    function TeacherRepository($resource){
+        var teacherApiUrl = 'http://roadrunnerapi.apphb.com/odata/Students';
+        return $resource(teacherApiUrl, {}, {
+            getAllTeachers: {method: 'GET'},
+            saveTeacher: {method: 'POST'},
+            updateTeacher: {method: 'PUT'}
+        })
+    }
+    
+})();
+
+
+---------------------------In controller---------------------------------------------------------
+    
+    vm.teacher = new TeacherRepository();
+
+    vm.saveTEacher = function(){
+        vm.teacher.$save().then(function(success){
+            alert("done")
+        }, function(faile){
+            alert(faile)
+        })
+    }
+    
+    
+    
+    ---------------------------In view---------------------------------------------------------
+    
+<form>
+  <div class="form-group">
+    <label for="exampleInputEmail1">Email address</label>
+    <input type="email" class="form-control" ng-model='vm.teacher.Email' id="exampleInputEmail1" placeholder="Email">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">FirstName</label>
+    <input type="password" class="form-control" ng-model="vm.teacher.FirstName" id="exampleInputPassword1" placeholder="Password">
+  </div>
+  <button type="submit" ng-click='vm.saveTEacher()' class="btn btn-default">Submit</button>
+</form>
